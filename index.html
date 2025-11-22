@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kakuma Health Tracker</title>
+<style>
+body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; color:#333; }
+header { background:#1976d2; color:oklab(98.673% 0.00613 0.00179); padding:1rem; text-align:center; }
+main { padding:2rem; max-width:900px; margin:auto; }
+#controls { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+input, select, button { padding:0.5rem; font-size:1rem; border-radius:5px; border:1px solid #ccc; }
+button { background:#1976d2; color:white; border:none; cursor:pointer; }
+button:hover { background:#115293; }
+#records-container { display:grid; gap:1rem; margin-top:1rem; }
+.record-card { background:white; padding:1rem; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+.record-card:hover { transform:translateY(-3px); transition:0.2s; }
+#chart-section { margin:2rem 0; background:white; padding:1rem; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+footer { text-align:center; padding:1rem; margin-top:2rem; font-size:0.9rem; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>Kakuma Health Tracker</h1>
+  <p>Tracking malaria and water-borne disease cases by Zone</p>
+</header>
+
+<main>
+  <section id="controls">
+    <input type="text" id="search-input" placeholder="Search by zone...">
+    <select id="sort-select">
+      <option value="malaria">Malaria Cases</option>
+        <option value="waterborne">Water-Borne Cases</option>
+      
+    </select>
+    <button id="sort-order-btn">Asc</button>
+  </section>
+
+  <section id="stats">
+    <p id="summary">Loading Kakuma health stats...</p>
+  </section>
+
+  <section id="chart-section">
+    <canvas id="healthChart" width="800" height="400"></canvas>
+  </section>
+
+  <section id="records">
+    <div id="records-container"></div>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2025 Kakuma malaria Tracker | Data simulated for demo purposes</p>
+</footer>
+
+<script>
+// Simulated data per Kakuma zone
+let data = [
+  { zone: "Zone 1", malaria: 250, waterborne: 150 },
+  { zone: "Zone 2", malaria: 300, waterborne: 200 },
+  { zone: "Zone 3", malaria: 180, waterborne: 120 },
+  { zone: "Zone 4", malaria: 220, waterborne: 100 },
+  { zone: "Zone 5", malaria: 150, waterborne: 90 },
+  { zone: "Zone 6", malaria: 200, waterborne: 130 },
+  { zone: "Zone 7", malaria: 170, waterborne: 110 },
+  { zone: "Zone 8", malaria: 140, waterborne: 80 },
+  { zone: "Zone 9", malaria: 190, waterborne: 100 },
+  { zone: "Zone 10", malaria: 210, waterborne: 150 }
+];
+
+const recordsContainer = document.getElementById('records-container');
+const searchInput = document.getElementById('search-input');
+const sortSelect = document.getElementById('sort-select');
+const sortOrderBtn = document.getElementById('sort-order-btn');
+const summary = document.getElementById('summary');
+let sortAsc = true;
+let chart;
+
+// Update summary
+function updateSummary() {
+  const totalMalaria = data.reduce((sum,c)=>sum+c.malaria,0);
+  const totalWater = data.reduce((sum,c)=>sum+c.waterborne,0);
+  summary.textContent = `Total Malaria Cases: ${totalMalaria}, Total Water-Borne Cases: ${totalWater}`;
+}
+
+// Render records
+function renderData(list) {
+  if(list.length === 0){
+    recordsContainer.innerHTML = '<p>No records found.</p>';
+    return;
+  }
+  recordsContainer.innerHTML = list.map(item => `
+    <div class="record-card">
+      <h3>${item.zone}</h3>
+      <p>Malaria Cases: ${item.malaria}</p>
+      <p>Water-Borne Cases: ${item.waterborne}</p>
+    </div>
+  `).join('');
+}
+
+// Render chart
+function renderChart(list){
+  const labels = list.map(z => z.zone);
+  const malariaData = list.map(z => z.malaria);
+  const waterData = list.map(z => z.waterborne);
+
+  if(chart) chart.destroy();
+
+  const ctx = document.getElementById('healthChart').getContext('2d');
+  chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Malaria', data: malariaData, backgroundColor: 'rgba(229,57,53,0.6)' },
+        { label: 'Water-Borne', data: waterData, backgroundColor: 'rgba(30,136,229,0.6)' }
+      ]
+    },
+    options: {
+      responsive:true,
+      plugins: {
+        legend: { position:'top' },
+        title: { display:true, text:'Kakuma Health Cases by Zone' }
+      }
+    }
+  });
+}
+
+// Search
+searchInput.addEventListener('input', () => {
+  const term = searchInput.value.toLowerCase();
+  const filtered = data.filter(d => d.zone.toLowerCase().includes(term));
+  renderData(filtered);
+  renderChart(filtered);
+});
+
+// Sort
+function sortData(){
+  const key = sortSelect.value;
+  const sorted = [...data].sort((a,b)=>{
+    if(sortAsc) return a[key] - b[key];
+    return b[key] - a[key];
+  });
+  renderData(sorted);
+  renderChart(sorted);
+}
+
+sortSelect.addEventListener('change', sortData);
+sortOrderBtn.addEventListener('click', ()=>{
+  sortAsc = !sortAsc;
+  sortOrderBtn.textContent = sortAsc ? 'Asc' : 'Desc';
+  sortData();
+});
+
+// Initialize
+updateSummary();
+renderData(data);
+renderChart(data);
+</script>
+
+</body>
+</html>
