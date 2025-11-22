@@ -1,0 +1,82 @@
+mutation SeedData @transaction @auth(level: NO_ACCESS) {
+  campSector_insertMany(data: [
+    {
+      name: "Sector A",
+      description: "Main sector",
+      populationEstimate: 1000
+    },
+    {
+      name: "Sector B",
+      description: "New sector",
+      populationEstimate: 500
+    }
+  ])
+  disease_insertMany(data: [
+    {
+      name: "Malaria",
+      description: "Mosquito borne disease",
+      type: "Infectious",
+      commonSymptoms: "Fever, chills, sweating"
+    },
+    {
+      name: "Cholera",
+      description: "Water borne disease",
+      type: "Infectious",
+      commonSymptoms: "Diarrhea, vomiting, dehydration"
+    }
+  ])
+  healthFacility_insertMany(data: [
+    {
+      name: "Clinic 1",
+      campSectorId: "550e8400-e29b-41d4-a716-446655440000",
+      contactNumber: "123-456-7890",
+      openingHours: "9am-5pm",
+      servicesOffered: "Basic healthcare"
+    },
+    {
+      name: "Hospital 1",
+      campSectorId: "550e8400-e29b-41d4-a716-446655440001",
+      contactNumber: "098-765-4321",
+      openingHours: "24/7",
+      servicesOffered: "Comprehensive healthcare"
+    }
+  ])
+  user_insertMany(data: [
+    {
+      firebaseUid: "someFirebaseUid1",
+      displayName: "John Doe",
+      campSectorId: "550e8400-e29b-41d4-a716-446655440000",
+      contactNumber: "111-222-3333",
+      role: "admin"
+    },
+    {
+      firebaseUid: "someFirebaseUid2",
+      displayName: "Jane Smith",
+      campSectorId: "550e8400-e29b-41d4-a716-446655440001",
+      contactNumber: "444-555-6666",
+      role: "nurse"
+    }
+  ])
+  healthCase_insertMany(data: [
+    {
+      campSectorId: "550e8400-e29b-41d4-a716-446655440000",
+      diseaseId: "550e8400-e29b-41d4-a716-446655440002",
+      patientId: "550e8400-e29b-41d4-a716-446655440004",
+      reportedById: "550e8400-e29b-41d4-a716-446655440004",
+      diagnosisDate: "2024-01-01",
+      severity: "Mild",
+      status: "Pending",
+      symptoms: "Headache, fever"
+    },
+    {
+      campSectorId: "550e8400-e29b-41d4-a716-446655440001",
+      diseaseId: "550e8400-e29b-41d4-a716-446655440003",
+      patientId: "550e8400-e29b-41d4-a716-446655440005",
+      reportedById: "550e8400-e29b-41d4-a716-446655440005",
+      diagnosisDate: "2024-01-02",
+      severity: "Severe",
+      status: "Confirmed",
+      symptoms: "Diarrhea, vomiting"
+    }
+  ])
+}

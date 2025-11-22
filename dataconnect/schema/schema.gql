@@ -1,0 +1,44 @@
+type User @table {
+  firebaseUid: String!
+  role: String!
+  createdAt: Timestamp!
+  displayName: String
+  contactNumber: String
+  campSector: CampSector
+}
+
+type Disease @table {
+  name: String!
+  type: String!
+  createdAt: Timestamp!
+  description: String
+  commonSymptoms: String
+}
+
+type HealthCase @table {
+  disease: Disease!
+  patient: User!
+  reportedBy: User!
+  diagnosisDate: Date!
+  status: String!
+  createdAt: Timestamp!
+  symptoms: String
+  severity: String
+  campSector: CampSector
+}
+
+type CampSector @table {
+  name: String!
+  createdAt: Timestamp!
+  description: String
+  populationEstimate: Int
+}
+
+type HealthFacility @table {
+  name: String!
+  campSector: CampSector!
+  createdAt: Timestamp!
+  contactNumber: String
+  openingHours: String
+  servicesOffered: String
+}

@@ -6,7 +6,7 @@
 <title>Kakuma Health Tracker</title>
 <style>
 body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; color:#333; }
-header { background:#1976d2; color:oklab(98.673% 0.00613 0.00179); padding:1rem; text-align:center; }
+header { background:#1976d2; color:white; padding:1rem; text-align:center; }
 main { padding:2rem; max-width:900px; margin:auto; }
 #controls { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; }
 input, select, button { padding:0.5rem; font-size:1rem; border-radius:5px; border:1px solid #ccc; }
@@ -32,8 +32,7 @@ footer { text-align:center; padding:1rem; margin-top:2rem; font-size:0.9rem; }
     <input type="text" id="search-input" placeholder="Search by zone...">
     <select id="sort-select">
       <option value="malaria">Malaria Cases</option>
-        <option value="waterborne">Water-Borne Cases</option>
-      
+      <option value="waterborne">Water-Borne Cases</option>
     </select>
     <button id="sort-order-btn">Asc</button>
   </section>
@@ -52,40 +51,68 @@ footer { text-align:center; padding:1rem; margin-top:2rem; font-size:0.9rem; }
 </main>
 
 <footer>
-  <p>&copy; 2025 Kakuma malaria Tracker | Data simulated for demo purposes</p>
+  <p>&copy; 2025 Kakuma Health Tracker | Firebase powered</p>
 </footer>
 
-<script>
-// Simulated data per Kakuma zone
-let data = [
-  { zone: "Zone 1", malaria: 250, waterborne: 150 },
-  { zone: "Zone 2", malaria: 300, waterborne: 200 },
-  { zone: "Zone 3", malaria: 180, waterborne: 120 },
-  { zone: "Zone 4", malaria: 220, waterborne: 100 },
-  { zone: "Zone 5", malaria: 150, waterborne: 90 },
-  { zone: "Zone 6", malaria: 200, waterborne: 130 },
-  { zone: "Zone 7", malaria: 170, waterborne: 110 },
-  { zone: "Zone 8", malaria: 140, waterborne: 80 },
-  { zone: "Zone 9", malaria: 190, waterborne: 100 },
-  { zone: "Zone 10", malaria: 210, waterborne: 150 }
-];
+<!-- ===============  FIREBASE + APP LOGIC  =================== -->
+<script type="module">
 
+// Firebase Imports
+import { initializeApp } 
+  from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { 
+  getFirestore, collection, getDocs 
+} from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+// Replace with your Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDy8aDB48XMtsqLM6KrIVcasEJTuYD6m4Q",
+  authDomain: "kakuma-health-tracker.firebaseapp.com",
+  projectId: "kakuma-health-tracker",
+  storageBucket: "kakuma-health-tracker.firebasestorage.app",
+  messagingSenderId: "491006632982",
+  appId: "1:491006632982:web:5a4a125aeb7bcb91090137",
+  measurementId: "G-Q4BGTDJMKM"
+};
+
+// Initialize Firebase & Firestore
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// UI elements
 const recordsContainer = document.getElementById('records-container');
 const searchInput = document.getElementById('search-input');
 const sortSelect = document.getElementById('sort-select');
 const sortOrderBtn = document.getElementById('sort-order-btn');
 const summary = document.getElementById('summary');
-let sortAsc = true;
-let chart;
 
-// Update summary
+let data = [];   // Firebase data storage
+let chart;
+let sortAsc = true;
+
+// Load data from Firestore
+async function loadData(){
+  const colRef = collection(db, "healthZones");
+  const snapshot = await getDocs(colRef);
+  
+  data = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+  
+  updateSummary();
+  renderData(data);
+  renderChart(data);
+}
+
+// Update summary totals
 function updateSummary() {
   const totalMalaria = data.reduce((sum,c)=>sum+c.malaria,0);
   const totalWater = data.reduce((sum,c)=>sum+c.waterborne,0);
   summary.textContent = `Total Malaria Cases: ${totalMalaria}, Total Water-Borne Cases: ${totalWater}`;
 }
 
-// Render records
+// Render cards
 function renderData(list) {
   if(list.length === 0){
     recordsContainer.innerHTML = '<p>No records found.</p>';
@@ -112,7 +139,7 @@ function renderChart(list){
   chart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: labels,
+      labels,
       datasets: [
         { label: 'Malaria', data: malariaData, backgroundColor: 'rgba(229,57,53,0.6)' },
         { label: 'Water-Borne', data: waterData, backgroundColor: 'rgba(30,136,229,0.6)' }
@@ -136,12 +163,11 @@ searchInput.addEventListener('input', () => {
   renderChart(filtered);
 });
 
-// Sort
+// Sorting
 function sortData(){
   const key = sortSelect.value;
   const sorted = [...data].sort((a,b)=>{
-    if(sortAsc) return a[key] - b[key];
-    return b[key] - a[key];
+    return sortAsc ? a[key] - b[key] : b[key] - a[key];
   });
   renderData(sorted);
   renderChart(sorted);
@@ -154,10 +180,9 @@ sortOrderBtn.addEventListener('click', ()=>{
   sortData();
 });
 
-// Initialize
-updateSummary();
-renderData(data);
-renderChart(data);
+// Start loading
+loadData();
+
 </script>
 
 </body>
