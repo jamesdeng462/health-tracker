@@ -1,4 +1,4 @@
-# Kakuma Health Tracker
+Kakuma Health Tracker
 
 Kakuma Health Tracker is a web-based health data visualization tool designed to monitor malaria and water-borne disease cases across different zones within Kakuma Refugee Camp.
 It leverages Firebase Firestore as an external API to fetch real-time health statistics and provides users with interactive tools for searching, sorting, filtering, and visualizing data.
@@ -6,19 +6,18 @@ It leverages Firebase Firestore as an external API to fetch real-time health sta
 This project was built as part of an academic assignment focused on API usage, meaningful application design, and real-world deployment using load-balanced web servers.
 
 ---
+ Table of Contents
 
-## 📌 Table of Contents
+ [Project Overview](#project-overview)
+[Features](#features)
+[Technology Stack](#technology-stack)
+ [External API Used](#external-api-used)
+ [Screenshots](#screenshots)
+ [How to Run Locally](#how-to-run-locally)
+ [Deployment Guide](#deployment-guide)
 
-* [Project Overview](#project-overview)
-* [Features](#features)
-* [Technology Stack](#technology-stack)
-* [External API Used](#external-api-used)
-* [Screenshots](#screenshots)
-* [How to Run Locally](#how-to-run-locally)
-* [Deployment Guide](#deployment-guide)
-
-  * [1. Prepare Your Web Servers](#1-prepare-your-web-servers)
-  * [2. Deploy to Web01 and Web02](#2-deploy-to-web01-and-web02)
+   [1. Prepare Your Web Servers](#1-prepare-your-web-servers)
+   [2. Deploy to Web01 and Web02](#2-deploy-to-web01-and-web02)
   * [3. Configure Load Balancer](#3-configure-load-balancer)
   * [4. Verify Load Balancing](#4-verify-load-balancing)
 * [Error Handling](#error-handling)
@@ -29,8 +28,7 @@ This project was built as part of an academic assignment focused on API usage, m
 * [Author](#author)
 
 ---
-
-##  Project Overview
+Project Overview
 
 Kakuma Health Tracker aims to provide practical value by helping health workers and decision-makers visualize disease trends in Kakuma Refugee Camp.
 
@@ -89,14 +87,13 @@ Firebase Firestore (Database API)
 
 Firestore is used as the external API to fetch structured health zone data:
 
-* `malaria_count`
-* `waterborne_count`
-* `zone`
+ `malaria_count`
+ `waterborne_count`
+ `zone`
 
 API documentation:
 [https://firebase.google.com/docs/firestore](https://firebase.google.com/docs/firestore)
-
-#### 🔒 API Key Safety
+🔒 API Key Safety
 
 Although the Firebase API key is safe for frontend usage, best practices were applied:
 
@@ -106,11 +103,8 @@ Although the Firebase API key is safe for frontend usage, best practices were ap
 
 ---
 
-## 🖼 Screenshots
 
-*(Add screenshots after deployment — recommended sections included.)*
 
----
 
 ## 🖥 How to Run Locally
 
